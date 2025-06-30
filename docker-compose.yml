@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  smartstudy-copilot:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - JWT_SECRET=your_development_jwt_secret
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    profiles:
+      - cache
+
+  # PostgreSQL for production (optional)
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: smartstudy_copilot
+      POSTGRES_USER: smartstudy_user
+      POSTGRES_PASSWORD: smartstudy_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    profiles:
+      - database
+
+volumes:
+  redis_data:
+  postgres_data: 
