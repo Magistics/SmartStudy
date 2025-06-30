@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStudy Copilot - Next-Gen Learning Platform</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#7c3aed',
+              secondary: '#06b6d4',
+              accent: '#f59e0b',
+              success: '#10b981',
+              warning: '#f97316',
+              error: '#ef4444',
+              dark: {
+                bg: '#0a0a0a',
+                surface: '#1a1a1a',
+                card: '#2a2a2a',
+                border: '#3a3a3a'
+              }
+            },
+            fontFamily: {
+              'display': ['Clash Display', 'Inter', 'sans-serif'],
+              'body': ['Inter', 'system-ui', 'sans-serif']
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'slide-up': 'slideUp 0.8s ease-out',
+              'fade-in': 'fadeIn 1s ease-out',
+              'scale-in': 'scaleIn 0.6s ease-out',
+              'glow': 'glow 2s ease-in-out infinite alternate',
+              'gradient': 'gradient 8s ease infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-20px)' }
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(100px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' }
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' }
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.8)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
+              },
+              glow: {
+                '0%': { boxShadow: '0 0 20px rgba(124, 58, 237, 0.5)' },
+                '100%': { boxShadow: '0 0 40px rgba(124, 58, 237, 0.8)' }
+              },
+              gradient: {
+                '0%, 100%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+      * {
+        font-family: 'Inter', sans-serif;
+      }
+      
+      .font-display {
+        font-family: 'Clash Display', sans-serif;
+      }
+      
+      /* Modern Card Styles */
+      .modern-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .dark .modern-card {
+        background: rgba(42, 42, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+      
+      .modern-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        border-color: rgba(124, 58, 237, 0.3);
+      }
+      
+      /* Button Styles */
+      .btn-primary {
+        background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+        border: none;
+        color: white;
+        padding: 12px 32px;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      
+      .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+      
+      .btn-primary:hover::before {
+        left: 100%;
+      }
+      
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+      }
+      
+      /* Feature Cards */
+      .feature-card {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+        border: 1px solid rgba(124, 58, 237, 0.2);
+        border-radius: 24px;
+        padding: 32px;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #7c3aed, #06b6d4, #f59e0b);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+      }
+      
+      .feature-card:hover::before {
+        transform: scaleX(1);
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
+      }
+      
+      /* Dark mode adjustments */
+      .dark .feature-card {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+        border-color: rgba(124, 58, 237, 0.1);
+      }
+
+      /* Form Styles */
+      .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: white;
+        color: #374151;
+      }
+
+      .dark .form-input {
+        background: #374151;
+        border-color: #4b5563;
+        color: white;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+      }
+
+      /* Section Styles */
+      .section {
+        padding: 80px 0;
+      }
+
+      /* Quiz Styles */
+      .quiz-question {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .dark .quiz-question {
+        background: #374151;
+        color: white;
+      }
+
+      .quiz-option {
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        margin: 8px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-option:hover {
+        border-color: #7c3aed;
+        background: rgba(124, 58, 237, 0.05);
+      }
+
+      .quiz-option.selected {
+        border-color: #7c3aed;
+        background: rgba(124, 58, 237, 0.1);
+      }
+
+      /* Progress Chart */
+      .progress-chart {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .dark .progress-chart {
+        background: #374151;
+        color: white;
+      }
+
+      /* Voice Assistant Styles */
+      .voice-controls {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .voice-btn {
+        padding: 12px 20px;
+        border-radius: 50px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .voice-btn.primary {
+        background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+        color: white;
+      }
+
+      .voice-btn.secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+      }
+
+      .dark .voice-btn.secondary {
+        background: #374151;
+        color: white;
+        border-color: #4b5563;
+      }
+
+      .voice-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .voice-status {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .voice-status.listening {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+      }
+
+      .voice-status.speaking {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+
+      .voice-status.error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+
+      /* Notification Styles */
+      .notification {
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        font-weight: 500;
+        animation: slideIn 0.3s ease-out;
+      }
+
+      .notification.success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
+
+      .notification.error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+
+      .notification.info {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* Loading Spinner */
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Hidden class */
+      .hidden {
+        display: none !important;
+      }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-dark-bg dark:via-dark-surface dark:to-dark-bg min-h-screen transition-all duration-500">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-dark-surface/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-dark-border/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-white text-lg"></i>
+                    </div>
+                    <span class="font-display text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        SmartStudy
+                    </span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link text-gray-700 dark:text-gray-300 font-medium hover:text-primary transition-colors">Home</a>
+                    <a href="#features" class="nav-link text-gray-700 dark:text-gray-300 font-medium hover:text-primary transition-colors">Features</a>
+                    <a href="#ai-tutor" class="nav-link text-gray-700 dark:text-gray-300 font-medium hover:text-primary transition-colors">AI Tutor</a>
+                    <a href="#quizzes" class="nav-link text-gray-700 dark:text-gray-300 font-medium hover:text-primary transition-colors">Quizzes</a>
+                    <a href="#progress" class="nav-link text-gray-700 dark:text-gray-300 font-medium hover:text-primary transition-colors">Progress</a>
+                    <a href="#voice" class="nav-link text-gray-700 dark:text-gray-300 font-medium hover:text-primary transition-colors">Voice</a>
+                    <a href="#login" class="nav-link text-gray-700 dark:text-gray-300 font-medium hover:text-primary transition-colors">Login</a>
+                </div>
+
+                <!-- Theme Toggle & CTA -->
+                <div class="flex items-center space-x-4">
+                    <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-dark-card hover:bg-gray-200 dark:hover:bg-dark-border transition-colors">
+                        <i class="fas fa-moon dark:hidden text-gray-600"></i>
+                        <i class="fas fa-sun hidden dark:block text-gray-300"></i>
+                    </button>
+                    <button id="getStartedBtn" class="btn-primary">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="section pt-24">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="font-display text-6xl lg:text-8xl font-bold mb-8 animate-slide-up">
+                    <span class="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-gradient">
+                        Next-Gen
+                    </span>
+                    <br>
+                    <span class="text-gray-900 dark:text-white">
+                        Learning
+                    </span>
+                </h1>
+                <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed animate-slide-up" style="animation-delay: 0.2s;">
+                    Experience the future of education with AI-powered personalized learning, 
+                    adaptive quizzes, and real-time progress tracking.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center animate-slide-up" style="animation-delay: 0.4s;">
+                    <button id="startLearningBtn" class="btn-primary text-lg px-8 py-4">
+                        <i class="fas fa-rocket mr-2"></i>
+                        Start Learning
+                    </button>
+                    <button id="watchDemoBtn" class="px-8 py-4 border-2 border-primary text-primary dark:text-white rounded-full font-semibold hover:bg-primary hover:text-white transition-all">
+                        <i class="fas fa-play mr-2"></i>
+                        Watch Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section bg-white/50 dark:bg-dark-surface/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6 animate-slide-up">
+                    <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        Revolutionary
+                    </span>
+                    <br>
+                    <span class="text-gray-900 dark:text-white">Features</span>
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                    Discover the cutting-edge features that make SmartStudy Copilot the ultimate learning companion.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- AI Tutor Feature -->
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.1s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-robot text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">AI-Powered Tutor</h3>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        Get personalized explanations at multiple learning levels with step-by-step problem solving.
+                    </p>
+                </div>
+
+                <!-- Adaptive Quizzes -->
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.2s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-secondary to-accent rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-brain text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Adaptive Quizzes</h3>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        AI-generated quizzes that adapt to your learning pace and focus on your weak areas.
+                    </p>
+                </div>
+
+                <!-- Voice Assistant -->
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.3s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-accent to-success rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-microphone text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Voice Assistant</h3>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        Interact naturally with voice commands and get spoken explanations for complex topics.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Tutor Section -->
+    <section id="ai-tutor" class="section">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        AI Tutor
+                    </span>
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                    Get personalized explanations and step-by-step problem solving at your learning level.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Explanation Request -->
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-lightbulb text-primary mr-3"></i>
+                        Get Explanation
+                    </h3>
+                    <form id="explanationForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Topic</label>
+                            <input type="text" id="explanationTopic" class="form-input" placeholder="e.g., Photosynthesis, Algebra, World War II" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Learning Level</label>
+                            <select id="explanationLevel" class="form-input">
+                                <option value="kid">Kid (Ages 8-12)</option>
+                                <option value="high-school" selected>High School (Ages 13-18)</option>
+                                <option value="advanced">Advanced (College+)</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Context (Optional)</label>
+                            <textarea id="explanationContext" class="form-input" rows="3" placeholder="Any additional context or specific aspects you want to focus on..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary w-full">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            Get Explanation
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Problem Solving -->
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-calculator text-secondary mr-3"></i>
+                        Solve Problem
+                    </h3>
+                    <form id="problemForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Problem</label>
+                            <textarea id="problemText" class="form-input" rows="4" placeholder="Enter your problem here..." required></textarea>
+                        </div>
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="showSteps" class="mr-2" checked>
+                                <span class="text-gray-700 dark:text-gray-300">Show step-by-step solution</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn-primary w-full">
+                            <i class="fas fa-calculator mr-2"></i>
+                            Solve Problem
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Area -->
+            <div id="aiResults" class="mt-12 hidden">
+                <div class="modern-card p-8">
+                    <div id="aiResultsContent"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quizzes Section -->
+    <section id="quizzes" class="section bg-white/50 dark:bg-dark-surface/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
+                        Adaptive
+                    </span>
+                    <br>
+                    <span class="text-gray-900 dark:text-white">Quizzes</span>
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                    Test your knowledge with AI-generated quizzes that adapt to your learning pace.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Quiz Generation -->
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-brain text-secondary mr-3"></i>
+                        Generate Quiz
+                    </h3>
+                    <form id="quizForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Topic</label>
+                            <input type="text" id="quizTopic" class="form-input" placeholder="e.g., Mathematics, Science, History" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Difficulty</label>
+                            <select id="quizDifficulty" class="form-input">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Focus Area (Optional)</label>
+                            <input type="text" id="quizFocusArea" class="form-input" placeholder="e.g., Algebra, Photosynthesis, World War II">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Student Level</label>
+                            <select id="quizStudentLevel" class="form-input">
+                                <option value="kid">Kid (Ages 8-12)</option>
+                                <option value="high-school" selected>High School (Ages 13-18)</option>
+                                <option value="advanced">Advanced (College+)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary w-full">
+                            <i class="fas fa-brain mr-2"></i>
+                            Generate Quiz
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Quiz Display -->
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-question-circle text-accent mr-3"></i>
+                        Quiz
+                    </h3>
+                    <div id="quizContainer" class="hidden">
+                        <div id="quizContent"></div>
+                        <div class="mt-6">
+                            <button id="submitQuizBtn" class="btn-primary w-full hidden">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Submit Quiz
+                            </button>
+                        </div>
+                    </div>
+                    <div id="quizPlaceholder" class="text-center text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-question-circle text-4xl mb-4"></i>
+                        <p>Generate a quiz to get started!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Results -->
+            <div id="quizResults" class="mt-12 hidden">
+                <div class="modern-card p-8">
+                    <div id="quizResultsContent"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Progress Section -->
+    <section id="progress" class="section">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-success to-secondary bg-clip-text text-transparent">
+                        Learning
+                    </span>
+                    <br>
+                    <span class="text-gray-900 dark:text-white">Progress</span>
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                    Track your learning journey with detailed analytics and insights.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Progress Chart -->
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-chart-line text-success mr-3"></i>
+                        Performance Overview
+                    </h3>
+                    <div class="progress-chart">
+                        <canvas id="progressChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-history text-accent mr-3"></i>
+                        Recent Activity
+                    </h3>
+                    <div id="recentActivity" class="space-y-4">
+                        <div class="text-center text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-chart-bar text-2xl mb-2"></i>
+                            <p>Complete quizzes to see your activity here!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Voice Assistant Section -->
+    <section id="voice" class="section bg-white/50 dark:bg-dark-surface/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+                        Voice
+                    </span>
+                    <br>
+                    <span class="text-gray-900 dark:text-white">Assistant</span>
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                    Interact naturally with voice commands and get spoken explanations.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Voice Controls -->
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-microphone text-accent mr-3"></i>
+                        Voice Commands
+                    </h3>
+                    
+                    <div class="voice-controls">
+                        <button id="startListeningBtn" class="voice-btn primary">
+                            <i class="fas fa-microphone mr-2"></i>
+                            Start Listening
+                        </button>
+                        <button id="stopListeningBtn" class="voice-btn secondary hidden">
+                            <i class="fas fa-stop mr-2"></i>
+                            Stop Listening
+                        </button>
+                    </div>
+
+                    <div id="voiceStatus" class="voice-status hidden">
+                        <i class="fas fa-circle mr-2"></i>
+                        <span id="voiceStatusText">Ready</span>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="block text-gray-700 dark:text-gray-300 mb-2">Voice Command</label>
+                        <input type="text" id="voiceCommandInput" class="form-input" placeholder="Type or speak your command...">
+                    </div>
+
+                    <div class="mt-4">
+                        <button id="processVoiceBtn" class="btn-primary w-full">
+                            <i class="fas fa-play mr-2"></i>
+                            Process Command
+                        </button>
+                    </div>
+
+                    <div class="mt-6">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Voice Quiz</h4>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Topic</label>
+                            <input type="text" id="voiceQuizTopic" class="form-input" placeholder="e.g., Mathematics, Science">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Difficulty</label>
+                            <select id="voiceQuizDifficulty" class="form-input">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                        <button id="generateVoiceQuizBtn" class="btn-primary w-full">
+                            <i class="fas fa-brain mr-2"></i>
+                            Generate Voice Quiz
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Voice Response -->
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-volume-up text-primary mr-3"></i>
+                        Voice Response
+                    </h3>
+                    
+                    <div id="voiceResponse" class="hidden">
+                        <div class="mb-4">
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Command</h4>
+                            <p id="voiceCommandText" class="text-gray-600 dark:text-gray-300"></p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Response</h4>
+                            <p id="voiceResponseText" class="text-gray-600 dark:text-gray-300"></p>
+                        </div>
+
+                        <div class="voice-controls">
+                            <button id="speakResponseBtn" class="voice-btn primary">
+                                <i class="fas fa-volume-up mr-2"></i>
+                                Speak Response
+                            </button>
+                            <button id="stopSpeakingBtn" class="voice-btn secondary hidden">
+                                <i class="fas fa-stop mr-2"></i>
+                                Stop Speaking
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="voiceQuizDisplay" class="hidden">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Voice Quiz</h4>
+                        <div id="voiceQuizContent"></div>
+                        <div class="mt-4">
+                            <button id="startVoiceQuizBtn" class="voice-btn primary">
+                                <i class="fas fa-play mr-2"></i>
+                                Start Quiz
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="voicePlaceholder" class="text-center text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-microphone text-4xl mb-4"></i>
+                        <p>Use voice commands to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section id="login" class="section">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        Get
+                    </span>
+                    <br>
+                    <span class="text-gray-900 dark:text-white">Started</span>
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                    Create an account or sign in to track your progress and access all features.
+                </p>
+            </div>
+
+            <div class="max-w-md mx-auto">
+                <div class="modern-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-sign-in-alt text-secondary mr-3"></i>
+                        Sign In
+                    </h3>
+                    <form id="signinForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                            <input type="email" id="signinEmail" class="form-input" placeholder="Enter email" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <input type="password" id="signinPassword" class="form-input" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn-primary w-full">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Sign In
+                        </button>
+                    </form>
+                    <div class="mt-6 text-center">
+                        <button id="googleSigninBtn" class="w-full px-6 py-3 border-2 border-gray-300 text-gray-600 rounded-full font-semibold hover:bg-gray-50 transition-all">
+                            <i class="fab fa-google mr-2"></i>
+                            Sign in with Google
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="fixed top-20 right-6 z-50"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html> 
